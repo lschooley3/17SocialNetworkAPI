@@ -1,4 +1,4 @@
-import { Schema, Types, model, type Document } from 'mongoose';
+import { Schema, model, type Document } from 'mongoose';
 
 
 
@@ -39,10 +39,15 @@ const userSchema = new Schema<IUser>({
     {
         toJSON: {
             getters: true,
+            virtuals: true,
         },
         timestamps: true
     }
 );
+
+userSchema.virtual('commentCount').get(function () {
+  return this.friends?.length;
+});
 
 const User = model('user', userSchema);
 
