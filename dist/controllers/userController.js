@@ -152,12 +152,12 @@ export const updateUser = async (req, res) => {
     try {
         const user = await User.findOneAndUpdate({ _id: req.params.userId }, { $set: req.body }, { runValidators: true, new: true });
         if (!user) {
-            res.status(404).json({ message: 'No user with this id!' });
+            return res.status(404).json({ message: 'No user with this id!' });
         }
-        res.json(user);
+        return res.json(user);
     }
     catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             message: error.message
         });
     }

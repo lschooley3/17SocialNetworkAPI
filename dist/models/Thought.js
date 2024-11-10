@@ -47,4 +47,5 @@ const thoughtSchema = new Schema({
     timestamps: true
 });
 const Thought = model('thought', thoughtSchema);
+// const Reaction = model<IReaction>('reaction', reactionSchema);
 export default Thought;

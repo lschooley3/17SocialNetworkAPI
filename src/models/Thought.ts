@@ -71,8 +71,7 @@ const thoughtSchema = new Schema<IThought>(
 
 const Thought = model<IThought>('thought', thoughtSchema);
 
-const Reaction = model<IReaction>('reaction', reactionSchema);
+// const Reaction = model<IReaction>('reaction', reactionSchema);
 
-export default Thought; Reaction;
-// ^This feels incorrect...^
+export default Thought;
 

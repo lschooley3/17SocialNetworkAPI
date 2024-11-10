@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { User, Thought, Reaction } from '../models/index.js';
+import { User, Thought } from '../models/index.js';
 
 /**
  * GET All Courses /courses
@@ -7,7 +7,7 @@ import { User, Thought, Reaction } from '../models/index.js';
 */
 export const getThoughts = async(_req: Request, res: Response) => {
     try {
-        const thoughts = await Thought.find();
+        const thoughts = await Thought.find().populate("reactions");
         res.json(thoughts);
     } catch(error: any){
         res.status(500).json({
@@ -129,10 +129,10 @@ return res.json({message:'Deleted the thought'});
   export const createReaction = async (req: Request, res: Response) => {
     try  {
       console.log(req.body);
-      const reaction = await Reaction.create(req.body);
+      // const reaction = await Reaction.create(req.body);
      const thought = await Thought.findOneAndUpdate(
-        {_id: req.body.thoughtId},
-        {$addToSet: {thoughts: reaction._id}},
+        {_id: req.params.thoughtId},
+        {$addToSet: {reactions:req.body}},
         {new: true}
       );
     
@@ -158,14 +158,9 @@ return res.json({message:'Deleted the thought'});
 
 export const deleteReaction = async (req: Request, res: Response) => {
   try {
-    const reaction = await Reaction.findOneAndDelete({ _id: req.params.reactionId});
-    
-if(!reaction) {
-return res.status(404).json({message:'No reaction with this id!'});
-};
 
 const thought = await Thought.findOneAndUpdate(
-{ reactions: req.params.reactionId },
+  {_id: req.params.thoughtId},
 { $pull: { reactions: req.params.reactionId } },
 { new: true }
 );
