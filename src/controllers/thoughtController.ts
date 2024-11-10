@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { User, Thought } from '../models/index.js';
+import { User, Thought, Reaction } from '../models/index.js';
 
 /**
  * GET All Courses /courses
@@ -123,3 +123,62 @@ return res.json({message:'Deleted the thought'});
       });
     }
   };
+ 
+  // create a Reaction to a Thought
+
+  export const createReaction = async (req: Request, res: Response) => {
+    try  {
+      console.log(req.body);
+      const reaction = await Reaction.create(req.body);
+     const thought = await Thought.findOneAndUpdate(
+        {_id: req.body.thoughtId},
+        {$addToSet: {thoughts: reaction._id}},
+        {new: true}
+      );
+    
+      if (!thought) {
+       res.status(404).json({ message: 'No thought with this id!' }); 
+      }
+      return res.json('Created the reaction');
+      
+  
+      } catch (error: any) {
+        return res.status(400).json({
+          message: error.message
+        });
+      }
+    };
+
+
+     /**
+ * DELETE Course based on id /courses/:id
+ * @param string id
+ * @returns string 
+*/
+
+export const deleteReaction = async (req: Request, res: Response) => {
+  try {
+    const reaction = await Reaction.findOneAndDelete({ _id: req.params.reactionId});
+    
+if(!reaction) {
+return res.status(404).json({message:'No reaction with this id!'});
+};
+
+const thought = await Thought.findOneAndUpdate(
+{ reactions: req.params.reactionId },
+{ $pull: { reactions: req.params.reactionId } },
+{ new: true }
+);
+
+if (!thought) {
+return res.status(404).json({ message: 'No thought with this id!' });
+}
+
+return res.json({message:'Deleted the reaction'});
+    
+  } catch (error: any) {
+   return res.status(500).json({
+      message: error.message
+    });
+  }
+};

@@ -145,3 +145,20 @@ export const removeFriend = async (req, res) => {
         return res.status(500).json(err);
     }
 };
+// * PUT Course based on id /courses/:id
+// * @param object id, username
+// * @returns a single Course object
+export const updateUser = async (req, res) => {
+    try {
+        const user = await User.findOneAndUpdate({ _id: req.params.userId }, { $set: req.body }, { runValidators: true, new: true });
+        if (!user) {
+            res.status(404).json({ message: 'No user with this id!' });
+        }
+        res.json(user);
+    }
+    catch (error) {
+        res.status(400).json({
+            message: error.message
+        });
+    }
+};
